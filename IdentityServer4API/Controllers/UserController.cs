@@ -1,4 +1,5 @@
-﻿using IdentityServer4API.DTOs;
+﻿using FreeCourse.Shared.Dtos;
+using IdentityServer4API.DTOs;
 using IdentityServer4API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,8 +33,7 @@ namespace IdentityServer4API.Controllers
             var result = await _userManager.CreateAsync(user, data.Password).ConfigureAwait(false);
             if (!result.Succeeded)
             {
-                //return BadRequest(Response<NoContent>.Fail(result.Errors.Select(x => x.Description).ToList(), 500));
-                return BadRequest();
+                return BadRequest(Response<NoContent>.Fail(result.Errors.Select(x => x.Description).ToList(), 500));
             }
             return NoContent();
         }
