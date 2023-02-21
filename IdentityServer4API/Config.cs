@@ -13,7 +13,7 @@ namespace IdentityServer4API
             new ApiResource("photostock_resource"){Scopes = {"photostock_fullpermission"} },
             new ApiResource("basket_resource"){Scopes = {"basket_fullpermission"} },
             new ApiResource("discount_resource"){Scopes = {"discount_fullpermission"} },
-            new ApiResource("discount_order"){Scopes = {"order_fullpermission"} },
+            new ApiResource("order_resource"){Scopes = {"order_fullpermission"} },
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName)
         };
         public static IEnumerable<IdentityResource> IdentityResources => new IdentityResource[]
