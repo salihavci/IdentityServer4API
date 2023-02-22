@@ -15,6 +15,7 @@ namespace IdentityServer4API
             new ApiResource("discount_resource"){Scopes = {"discount_fullpermission"} },
             new ApiResource("order_resource"){Scopes = {"order_fullpermission"} },
             new ApiResource("payment_resource"){Scopes = {"payment_fullpermission"} },
+            new ApiResource("gateway_resource"){Scopes = {"gateway_fullpermission"} },
             new ApiResource(IdentityServerConstants.LocalApi.ScopeName)
         };
         public static IEnumerable<IdentityResource> IdentityResources => new IdentityResource[]
@@ -32,6 +33,7 @@ namespace IdentityServer4API
         new ApiScope("discount_fullpermission","Discount(İndirim) API'si için full erişim"),
         new ApiScope("order_fullpermission","Order(Sipariş) API'si için full erişim"),
         new ApiScope("payment_fullpermission","Payment(Ödeme) API'si için full erişim"),
+        new ApiScope("gateway_fullpermission","Ocelot Gateway API'si için full erişim"),
         new ApiScope(IdentityServerConstants.LocalApi.ScopeName)
         };
         public static IEnumerable<Client> Clients => new Client[]
@@ -45,6 +47,7 @@ namespace IdentityServer4API
                 AllowedScopes = {
                     "catalog_fullpermission",
                     "photostock_fullpermission",
+                    "gateway_fullpermission",
                     IdentityServerConstants.LocalApi.ScopeName
                 }
             },
@@ -60,6 +63,7 @@ namespace IdentityServer4API
                     "discount_fullpermission",
                     "order_fullpermission",
                     "payment_fullpermission",
+                    "gateway_fullpermission",
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
