@@ -3,17 +3,11 @@ using IdentityServer4API.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace IdentityServer4API
 {
@@ -33,6 +27,7 @@ namespace IdentityServer4API
             services.AddIdentity<AppUser,AppRole>().AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
             services.AddControllers();
             services.AddDbContext<AppIdentityDbContext>(opts => opts.UseSqlServer("name=ConnectionStrings:DefaultConnection").UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking).EnableSensitiveDataLogging());
+            
             var builder = services.AddIdentityServer(opts =>
             {
                 opts.Events.RaiseSuccessEvents = true;
@@ -40,10 +35,15 @@ namespace IdentityServer4API
                 opts.Events.RaiseErrorEvents = true;
                 opts.Events.RaiseInformationEvents = true;
                 opts.EmitStaticAudienceClaim = true;
-            }).AddInMemoryApiScopes(Config.ApiScopes).AddInMemoryApiResources(Config.ApiResources).AddInMemoryClients(Config.Clients).AddInMemoryIdentityResources(Config.IdentityResources);
+            }).AddInMemoryApiScopes(Config.ApiScopes)
+            .AddInMemoryApiResources(Config.ApiResources)
+            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryIdentityResources(Config.IdentityResources);
 
             builder.AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
+            builder.AddProfileService<ProfileService<AppUser>>(); //Custom Claim ekleme için yazýlan servis.
             builder.AddDeveloperSigningCredential();
+
             services.AddAuthentication();
             services.AddSwaggerGen(c =>
             {
