@@ -1,5 +1,6 @@
 using IdentityServer4API.Models;
 using IdentityServer4API.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace IdentityServer4API
 {
@@ -44,6 +46,7 @@ namespace IdentityServer4API
             builder.AddProfileService<ProfileService<AppUser>>(); //Custom Claim ekleme için yazýlan servis.
             builder.AddDeveloperSigningCredential();
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication();
             services.AddSwaggerGen(c =>
             {

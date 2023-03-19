@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -17,18 +18,21 @@ namespace IdentityServer4API.Services
         protected readonly IUserClaimsPrincipalFactory<TUser> ClaimsFactory;
         protected readonly ILogger<ProfileService<TUser>> Logger;
         private readonly UserManager<TUser> _userManager;
+        private readonly RoleManager<AppRole> _roleManager;
 
-        public ProfileService(UserManager<TUser> userManager, IUserClaimsPrincipalFactory<TUser> claimsFactory)
+        public ProfileService(UserManager<TUser> userManager,RoleManager<AppRole> roleManager, IUserClaimsPrincipalFactory<TUser> claimsFactory)
         {
             _userManager = userManager;
             ClaimsFactory = claimsFactory;
+            _roleManager = roleManager;
         }
 
-        public ProfileService(IUserClaimsPrincipalFactory<TUser> claimsFactory, ILogger<ProfileService<TUser>> logger, UserManager<TUser> userManager)
+        public ProfileService(IUserClaimsPrincipalFactory<TUser> claimsFactory, RoleManager<AppRole> roleManager, ILogger<ProfileService<TUser>> logger, UserManager<TUser> userManager)
         {
             ClaimsFactory = claimsFactory;
             Logger = logger;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public virtual async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -59,6 +63,22 @@ namespace IdentityServer4API.Services
                     new Claim("city",userInfo.City, ClaimValueTypes.String)
                 };
             context.IssuedClaims.AddRange(additionalClaims);
+
+            var roleList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            var roleClaims = new List<Claim>();
+            foreach (var role in roleList)
+            {
+                roleClaims.Add(new Claim(JwtClaimTypes.Role, role));
+                if(_roleManager.SupportsRoleClaims)
+                {
+                    var r = await _roleManager.FindByNameAsync(role).ConfigureAwait(false);
+                    if(r != null)
+                    {
+                        roleClaims.AddRange(await _roleManager.GetClaimsAsync(r).ConfigureAwait(false));
+                    }
+                }
+            }
+            context.IssuedClaims.AddRange(roleClaims);
         }
 
         protected virtual async Task<ClaimsPrincipal> GetUserClaimsAsync(TUser user)
