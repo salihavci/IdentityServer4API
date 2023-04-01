@@ -43,6 +43,7 @@ namespace IdentityServer4API
             .AddInMemoryIdentityResources(Config.IdentityResources);
 
             builder.AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
+            builder.AddExtensionGrantValidator<TokenExchangeExtensionGrantValidator>();
             builder.AddProfileService<ProfileService<AppUser>>(); //Custom Claim ekleme için yazýlan servis.
             builder.AddDeveloperSigningCredential();
 
