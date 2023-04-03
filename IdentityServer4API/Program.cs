@@ -1,19 +1,41 @@
+using IdentityServer4API.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace IdentityServer4API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            try
+            {
+                var host = CreateHostBuilder(args).Build();
+                using (var scope = host.Services.CreateScope())
+                {
+                    var sp = scope.ServiceProvider;
+                    var appDbContext = sp.GetRequiredService<AppIdentityDbContext>();
+                    appDbContext.Database.Migrate();
+                    var userManager = sp.GetRequiredService<UserManager<AppUser>>();
+                    if(!userManager.Users.Any())
+                    {
+                        userManager.CreateAsync(new AppUser() { UserName = "savci8", Email = "savci8@ford.com.tr", City = "Bursa" }, "Password12*").Wait();
+                    }
+                }
+
+                host.Run();
+                return 0;
+
+            }
+            catch (Exception ex)
+            {
+                return 1;
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
