@@ -11,9 +11,10 @@ services:
       - ACCEPT_EULA=Y
   identity.api:
     container_name: identity_api
+    restart: on-failture
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ConnectionString:DefaultConnection=Server=identitydb,1433;Database=IdentityDb;User=sa; Password=Password12*"
+      - "ConnectionStrings:DefaultConnection=Server=identitydb,1433;Database=IdentityDb;User=sa; Password=Password12*"
     ports:
       - "5000:80"
     depends_on:
